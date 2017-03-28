@@ -1,0 +1,23 @@
+<ScrollView orientation="vertical">
+    <StackLayout class="page" orientation="vertical">
+        <Label class="h1" text="Māori in Waikato"></Label>
+        <HtmlView
+                html="{{'Within the boundaries of Hamilton lie several significant historic Maori sites. These sites range in type from <strong>Pa</strong>, <strong>Urupa</strong>, and <strong>Papakainga</strong>.  The majority of these sites were constructed by the people of Ngati Wairere or its sub-tribes.  Many of the sites are in close proximity to the Waikato river and Hamilton CBD, and are either designated as parks or reserves.  Some sites are currently occupied by buildings.  <strong>Pukete Pa</strong> is one example of a fortified Pa located at Braithwaite park, on the west bank of the waikato river at Pukete Road.  Another Major Pa site located within the Hamilton CBD on London street is <strong>Kirikiriroa Pa</strong>.'}}"
+                class="body" textWrap="true"></HtmlView>
+
+        <Label class="h2" text="Pa"></Label>
+        <Label text="A pa is a fortified village where Maori Chiefs and Warriors lived.  It was a place of refuge when invading war parties came.  In general fortified Pa was constructed by levelling an area of ground. Holes were dug around the perimeter of the site and large, heavy, adzed wooden poles or split logs would be set close together with manuka stakes leaving a sufficient gap to allow spears to be thrust between them."
+               class="body" textWrap="true"></Label>
+
+        <GridLayout columns="40,*" rows="auto,auto,auto" class="navigation">
+            <Image row="0" col="0" class="thumb" src="res://icon"></Image>
+            <Label row="0" col="1" class="nav-label" text="Papakainga and Urupa" [nsRouterLink]="['/papakainga']"></Label>
+
+            <Image row="1" col="0" class="thumb" src="res://icon"></Image>
+            <Label row="1" col="1" class="nav-label" text="Pukete Pa" [nsRouterLink]="['/pukete']"></Label>
+
+            <Image row="2" col="0" class="thumb" src="res://icon"></Image>
+            <Label row="2" col="1" class="nav-label" text="Kirikiriroa Pa" [nsRouterLink]="['/kirikiriroa']"></Label>
+        </GridLayout>
+    </StackLayout>
+</ScrollView>
