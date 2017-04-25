@@ -1,6 +1,10 @@
 <ScrollView orientation="vertical">
     <StackLayout class="page" orientation="vertical">
-        <Label class="h2" text="Kirikiriroa Pa"></Label>
+        <DockLayout stretchLast="true">
+            <Image dock="right" class="map-icon" src="res://map" [nsRouterLink]="['/map', 1]"></Image>
+            <Label dock="left" class="h2" text="Kirikiriroa Pa"></Label>
+        </DockLayout>
+
         <Label text="Kirikiriroa Pa is the most significant Pa within the Hamilton City area. It was a fully fortified Pa Whakairo (Pa with carved palisades). It was an half oval in shape with the riverbank as the flat side and the curved front stretching from London Street to Claudelands Road. The curved front was fortified by a ditch and mound structure with an elaborate wooden palisade atop the mound."
                class="body" textWrap="true"></Label>
 

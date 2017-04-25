@@ -6,6 +6,7 @@ import {HomeComponent} from "./pages/home/home.component";
 import {KirikiriroaComponent} from "./pages/story/kirikiriroa.component";
 import {PapakaingaComponent} from "./pages/story/papakainga.component";
 import {PuketeComponent} from "./pages/story/pukete.component";
+import {MapComponent} from "./pages/map/map.component";
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import {PuketeComponent} from "./pages/story/pukete.component";
         HomeComponent,
         KirikiriroaComponent,
         PapakaingaComponent,
-        PuketeComponent
+        PuketeComponent,
+        MapComponent
     ],
     providers: [],
     schemas: [

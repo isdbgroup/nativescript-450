@@ -1,0 +1,4 @@
+<GridLayout>
+    <MapView [latitude]="cameraLat" [longitude]="cameraLng" [zoom]="zoom"
+             (mapReady)="onMapReady($event)" (markerSelect)="onMarkerSelect($event)"></MapView>
+</GridLayout>

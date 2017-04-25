@@ -1,6 +1,10 @@
 <ScrollView orientation="vertical">
     <StackLayout class="page" orientation="vertical">
-        <Label class="h2" text="Pukete Pa"></Label>
+        <DockLayout stretchLast="true">
+            <Image dock="right" class="map-icon" src="res://map" [nsRouterLink]="['/map', 0]"></Image>
+            <Label dock="left" class="h2" text="Pukete Pa"></Label>
+        </DockLayout>
+
         <Label text="Pukete was a fortified Pa, believed to have been constructed by Nga Iwi. Ngati Koura conquered the Nga Iwi inhabitants and took over the pa and surrounding lands."
                class="body" textWrap="true"></Label>
 

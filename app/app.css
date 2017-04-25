@@ -34,3 +34,7 @@ refer to http://docs.nativescript.org/ui/theme.
 .img-featured {
     margin: 6 26;
 }
+
+.map-icon {
+    height: 24;
+}

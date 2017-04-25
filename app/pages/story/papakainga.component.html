@@ -1,10 +1,16 @@
 <ScrollView orientation="vertical">
     <StackLayout class="page" orientation="vertical">
-        <Label class="h2" text="Papakainga"></Label>
+        <DockLayout stretchLast="true">
+            <Image dock="right" class="map-icon" src="res://map" [nsRouterLink]="['/map', 2]"></Image>
+            <Label dock="left" class="h2" text="Papakainga"></Label>
+        </DockLayout>
+
         <Label text="A Papakainga was an unfortified and undefended village or hamlet. In pre-European times Papakainga were associated with food production and storage and inhabited by the people involved in these processes."
                class="body" textWrap="true"></Label>
 
+
         <Label class="h2" text="Urupa"></Label>
+
         <Label text="Urupa are burial grounds where bodies of tribe members were buried with elaborate ceremonies and rituals. Often the bodies were buried with items of personal adornment or greenstone artifacts."
                class="body" textWrap="true"></Label>
     </StackLayout>
