@@ -13,6 +13,7 @@ const routes: Routes = [
     {path: "kirikiriroa", component: KirikiriroaComponent},
     {path: "papakainga", component: PapakaingaComponent},
     {path: "pukete", component: PuketeComponent},
+    {path: "map", component: MapComponent},
     {path: "map/:id", component: MapComponent}
 ];
 

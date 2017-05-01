@@ -6,6 +6,10 @@ import "rxjs/add/operator/switchMap";
 import {Page} from "ui/page";
 import {BaseComponent} from "../base.component";
 import {Router} from "@angular/router";
+import {TNSPlayer} from 'nativescript-audio';
+import * as permissions from "nativescript-permissions";
+
+declare var android;
 
 @Component({
     selector: "ns-map",
@@ -14,23 +18,29 @@ import {Router} from "@angular/router";
 })
 export class MapComponent extends BaseComponent {
     /** All known locations */
-    locations = [
+    private locations = [
         new NamedLocation(0, "/pukete", "Pukete Pa", -37.73705, 175.237474),
         new NamedLocation(1, "/kirikiriroa", "Kirikiriroa Pa", -37.782704, 175.28051),
         new NamedLocation(2, "/papakainga", "Papakainga", -37.73339, 175.241246)];
 
     /** Center of the map */
-    cameraLat = -37.782704;
-    cameraLng = 175.28051;
-    zoom = 17;
+    private cameraLat = -37.782704;
+    private cameraLng = 175.28051;
+    private zoom = 17;
 
-    map: MapView;
+    /** Map instance */
+    private map: MapView;
+
+    /** Player for the chirp sound indicating a nearby location */
+    private nearbySound: TNSPlayer;
 
     /** ID of the location to be shown */
-    id: number;
+    private id: number;
 
     constructor(private pageRoute: PageRoute, private router: Router, protected page: Page) {
         super(page);
+
+        this.setupNearbySound();
 
         this.pageRoute.activatedRoute
             .switchMap(activatedRoute => activatedRoute.params)
@@ -41,14 +51,59 @@ export class MapComponent extends BaseComponent {
     onMapReady = (event) => {
         this.map = event.object;
 
+        console.log("Requesting permission to access location");
+        permissions.requestPermissions(
+            [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION],
+            "App would like to show your location on the map")
+            .then(() => {
+                console.log("** access granted");
+                this.setupMap();
+            })
+            .catch(() => {
+                console.log("** access denied");
+            });
+        this.addMapMarker();
+    };
+
+    /** Set up the map and enable some features such as showing the own location */
+    setupMap() {
+        if (isNullOrUndefined(this.map)) {
+            return;
+        }
+
+        let gMap = this.map.gMap;
+        if (this.map.android) {
+            // let uiSettings = gMap.getUiSettings();
+            // uiSettings.setMyLocationButtonEnabled(true);
+            gMap.setMyLocationEnabled(true);
+        }
+
+        if (this.map.ios) {
+            // gMap.myLocationEnabled = true;
+            // gMap.settings.myLocationButton = true;
+        }
+    }
+
+    /** Add map marker depending on the location ID passed to this component. */
+    addMapMarker() {
+        if (isNullOrUndefined(this.map)) {
+            return;
+        }
+
         let location = this.getCurrentLocation();
-        if (location != null) {
+        if (location == null) {
+            this.locations.forEach(location => this.addMarker(location));
+            this.cameraLng = this.locations[0].longitude;
+            this.cameraLat = this.locations[0].latitude;
+            this.zoom = 14;
+        } else {
             this.cameraLat = location.latitude;
             this.cameraLng = location.longitude;
             this.addMarker(location);
         }
-    };
+    }
 
+    /** Action if a map marker is tapped. */
     onMarkerSelect = (event: MarkerEventData) => {
         let marker: Marker = event.marker;
         if (isNullOrUndefined(marker.userData) || isNullOrUndefined(marker.userData.id)) {
@@ -58,6 +113,24 @@ export class MapComponent extends BaseComponent {
         let location = this.getLocation(marker.userData.id);
         this.router.navigate([location.path]);
     };
+
+    /** Set up the player for playing the sound that indicates a nearby location. */
+    setupNearbySound() {
+        this.nearbySound = new TNSPlayer();
+        this.nearbySound.initFromFile({
+            audioFile: '~/audio/chirp.wav',
+            loop: false
+        }).then(() => {
+            console.log("Media player initialised");
+        });
+    }
+
+    /** Play the sound indicating a nearby location */
+    playNearbySound() {
+        console.log("Play chirp sound");
+        //noinspection JSIgnoredPromiseFromCall
+        this.nearbySound.play();
+    }
 
     /**
      * Add a marker for {@code location} to the map.

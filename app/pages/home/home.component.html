@@ -1,6 +1,10 @@
 <ScrollView orientation="vertical">
     <StackLayout class="page" orientation="vertical">
-        <Label class="h1" text="Māori in Waikato"></Label>
+        <DockLayout stretchLast="true">
+            <Image dock="right" class="map-icon" src="res://map" [nsRouterLink]="['/map']"></Image>
+            <Label dock="left" class="h1" text="Māori in Waikato"></Label>
+        </DockLayout>
+
         <HtmlView
                 html="{{'Within the boundaries of Hamilton lie several significant historic Maori sites. These sites range in type from <strong>Pa</strong>, <strong>Urupa</strong>, and <strong>Papakainga</strong>.  The majority of these sites were constructed by the people of Ngati Wairere or its sub-tribes.  Many of the sites are in close proximity to the Waikato river and Hamilton CBD, and are either designated as parks or reserves.  Some sites are currently occupied by buildings.  <strong>Pukete Pa</strong> is one example of a fortified Pa located at Braithwaite park, on the west bank of the waikato river at Pukete Road.  Another Major Pa site located within the Hamilton CBD on London street is <strong>Kirikiriroa Pa</strong>.'}}"
                 class="body" textWrap="true"></HtmlView>
