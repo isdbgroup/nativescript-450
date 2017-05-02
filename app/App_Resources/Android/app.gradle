@@ -5,12 +5,17 @@
 //	compile 'com.android.support:recyclerview-v7:+'
 //}
 
-android {  
-  defaultConfig {  
+dependencies {
+  compile 'com.google.android.gms:play-services-maps:+'
+  compile 'com.google.android.gms:play-services-location:+'
+}
+
+android {
+  defaultConfig {
     generatedDensities = []
     applicationId = "org.nativescript.bokker"
-  }  
-  aaptOptions {  
-    additionalParameters "--no-version-vectors"  
-  }  
+  }
+  aaptOptions {
+    additionalParameters "--no-version-vectors"
+  }
 } 

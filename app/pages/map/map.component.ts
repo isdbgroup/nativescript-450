@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnDestroy} from "@angular/core";
 import {PageRoute} from "nativescript-angular/router";
 import {MapView, Marker, MarkerEventData, Position} from "nativescript-google-maps-sdk";
 import {isNullOrUndefined} from "utils/types";
@@ -8,15 +8,17 @@ import {BaseComponent} from "../base.component";
 import {Router} from "@angular/router";
 import {TNSPlayer} from 'nativescript-audio';
 import * as permissions from "nativescript-permissions";
+import {LocationService} from "../../services/location.service";
+import {Location, LocationManager} from "location";
 
-declare var android;
+declare let android: any;
 
 @Component({
     selector: "ns-map",
     moduleId: module.id,
     templateUrl: "map.component.html",
 })
-export class MapComponent extends BaseComponent {
+export class MapComponent extends BaseComponent implements OnDestroy {
     /** All known locations */
     private locations = [
         new NamedLocation(0, "/pukete", "Pukete Pa", -37.73705, 175.237474),
@@ -37,14 +39,22 @@ export class MapComponent extends BaseComponent {
     /** ID of the location to be shown */
     private id: number;
 
+    locationService: LocationService;
+
     constructor(private pageRoute: PageRoute, private router: Router, protected page: Page) {
         super(page);
-
-        this.setupNearbySound();
 
         this.pageRoute.activatedRoute
             .switchMap(activatedRoute => activatedRoute.params)
             .forEach((params) => this.id = +params['id']);
+
+        this.setupNearbySound();
+    }
+
+    ngOnDestroy(): void {
+        if (this.locationService) {
+            this.locationService.disableLocationUpdates();
+        }
     }
 
     /** Listener method when the map has been fully instantiated */
@@ -57,7 +67,18 @@ export class MapComponent extends BaseComponent {
             "App would like to show your location on the map")
             .then(() => {
                 console.log("** access granted");
+
                 this.setupMap();
+
+                this.locationService = new LocationService();
+                this.locationService.on(LocationService.CONNECTED_EVENT, (eventData) => {
+                    console.log("Location service connected");
+                    this.locationService.enableLocationUpdates(1000);
+                    this.processLocationUpdate((<LocationService>eventData.object).getLastLocation());
+                });
+                this.locationService.on(LocationService.LOCATION_UPDATE_EVENT,
+                    (eventData) => this.processLocationUpdate((<LocationService>eventData.object).getLastLocation())
+                );
             })
             .catch(() => {
                 console.log("** access denied");
@@ -73,14 +94,11 @@ export class MapComponent extends BaseComponent {
 
         let gMap = this.map.gMap;
         if (this.map.android) {
-            // let uiSettings = gMap.getUiSettings();
-            // uiSettings.setMyLocationButtonEnabled(true);
             gMap.setMyLocationEnabled(true);
         }
 
         if (this.map.ios) {
-            // gMap.myLocationEnabled = true;
-            // gMap.settings.myLocationButton = true;
+            gMap.myLocationEnabled = true;
         }
     }
 
@@ -123,6 +141,36 @@ export class MapComponent extends BaseComponent {
         }).then(() => {
             console.log("Media player initialised");
         });
+    }
+
+    /**
+     * Process a location update. If a known location is within reach then play a sound.
+     *
+     * @param location
+     *      received location
+     */
+    processLocationUpdate(location: Location) {
+        console.log("Received location update");
+        if (isNullOrUndefined(location)) {
+            return;
+        }
+
+        // If location is used directly then the distance function seems to return wrong results
+        // e.g., the values don't change
+        let userLocation = new Location();
+        userLocation.longitude = location.longitude;
+        userLocation.latitude = location.latitude;
+
+        for (let i = 0; i < this.locations.length; i++) {
+            let markerLocation = new Location();
+            markerLocation.longitude = this.locations[i].longitude;
+            markerLocation.latitude = this.locations[i].latitude;
+            let distance = LocationManager.distance(userLocation, markerLocation);
+            console.log("### Distance to " + i + ": " + distance);
+            if (distance < 200) {
+                this.nearbySound.play();
+            }
+        }
     }
 
     /** Play the sound indicating a nearby location */
